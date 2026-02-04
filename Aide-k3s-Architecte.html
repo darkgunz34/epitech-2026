@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture K3s - Epitech</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1F485E 0%, #0091D3 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0091D3 0%, #1F485E 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 252, 154, 0.1);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .epitech-badge {
+            background: #FFFC9A;
+            color: #1F485E;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            background: #f0f8ff;
+            color: #1F485E;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px solid #0091D3;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 145, 211, 0.3);
+        }
+        
+        .tab.active {
+            background: #0091D3;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .architecture-diagram {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 2px solid #0091D3;
+        }
+        
+        .component-box {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 5px solid #0091D3;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .component-box:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 145, 211, 0.2);
+        }
+        
+        .component-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1F485E;
+            margin-bottom: 10px;
+        }
+        
+        .component-description {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .visual-diagram {
+            background: linear-gradient(135deg, #f0f8ff 0%, #e3f2fd 100%);
+            padding: 40px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            border: 3px solid #0091D3;
+        }
+        
+        .server-node {
+            background: #0091D3;
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px auto;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0, 145, 211, 0.3);
+        }
+        
+        .server-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .mini-component {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .mini-component h4 {
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+        
+        .mini-component p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .agent-node {
+            background: #FFFC9A;
+            color: #1F485E;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px auto;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(255, 252, 154, 0.3);
+            border: 3px solid #0091D3;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 145, 211, 0.1);
+        }
+        
+        .comparison-table th {
+            background: #0091D3;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .comparison-table tr:hover {
+            background: #f0f8ff;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #0091D3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .info-box strong {
+            color: #1F485E;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #FFFC9A 0%, #fff9c4 100%);
+            border: 3px solid #0091D3;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 12px;
+        }
+        
+        .highlight-box h3 {
+            color: #1F485E;
+            margin-bottom: 15px;
+        }
+        
+        .highlight-box ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .highlight-box li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #1F485E;
+        }
+        
+        .highlight-box li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #0091D3;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .footer {
+            background: #1F485E;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+        }
+        
+        .footer-accent {
+            color: #FFFC9A;
+            font-weight: bold;
+        }
+        
+        .arrow-down {
+            font-size: 2em;
+            color: #0091D3;
+            margin: 20px 0;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .network-flow {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 2px solid #0091D3;
+        }
+        
+        .flow-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f0f8ff;
+            border-radius: 8px;
+        }
+        
+        .flow-number {
+            background: #0091D3;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .flow-text {
+            color: #1F485E;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏗️ Architecture K3s</h1>
+            <p>Comprendre la structure d'un cluster Kubernetes léger</p>
+            <div class="epitech-badge">EPITECH - Excellence Informatique</div>
+        </div>
+        
+        <div class="content">
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('overview')">📋 Vue d'ensemble</div>
+                <div class="tab" onclick="showTab('server')">🖥️ Nœud Server</div>
+                <div class="tab" onclick="showTab('agent')">⚙️ Nœud Agent</div>
+                <div class="tab" onclick="showTab('comparison')">🔄 K3s vs K8s</div>
+                <div class="tab" onclick="showTab('network')">🌐 Réseau</div>
+            </div>
+            
+            <!-- OVERVIEW TAB -->
+            <div id="overview" class="tab-content active">
+                <div class="highlight-box">
+                    <h3>🎯 Architecture K3s en bref</h3>
+                    <ul>
+                        <li>Architecture simplifiée par rapport à Kubernetes classique</li>
+                        <li>Binaire unique contenant tous les composants</li>
+                        <li>Base de données SQLite intégrée (ou etcd optionnel)</li>
+                        <li>Containerd comme runtime par défaut</li>
+                        <li>Traefik comme ingress controller pré-installé</li>
+                    </ul>
+                </div>
+                
+                <div class="visual-diagram">
+                    <h2 style="color: #1F485E; margin-bottom: 30px;">🏗️ Structure du Cluster K3s</h2>
+                    
+                    <div class="server-node">
+                        <div class="server-title">🖥️ K3S SERVER (Control Plane)</div>
+                        <div class="components-grid">
+                            <div class="mini-component">
+                                <h4>🎮 API Server</h4>
+                                <p>Point d'entrée principal</p>
+                            </div>
+                            <div class="mini-component">
+                                <h4>📊 Scheduler</h4>
+                                <p>Placement des pods</p>
+                            </div>
+                            <div class="mini-component">
+                                <h4>🎛️ Controller Manager</h4>
+                                <p>Gestion du cluster</p>
+                            </div>
+                            <div class="mini-component">
+                                <h4>💾 SQLite/etcd</h4>
+                                <p>Base de données</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="arrow-down">↓</div>
+                    
+                    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                        <div class="agent-node">
+                            <div style="font-size: 1.5em; font-weight: bold; margin-bottom: 15px;">⚙️ AGENT NODE 1</div>
+                            <div style="text-align: left;">
+                                <p><strong>• Kubelet</strong> - Gestion pods</p>
+                                <p><strong>• Containerd</strong> - Runtime</p>
+                                <p><strong>• Kube-proxy</strong> - Réseau</p>
+                            </div>
+                        </div>
+                        
+                        <div class="agent-node">
+                            <div style="font-size: 1.5em; font-weight: bold; margin-bottom: 15px;">⚙️ AGENT NODE 2</div>
+                            <div style="text-align: left;">
+                                <p><strong>• Kubelet</strong> - Gestion pods</p>
+                                <p><strong>• Containerd</strong> - Runtime</p>
+                                <p><strong>• Kube-proxy</strong> - Réseau</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <strong>💡 Note importante :</strong> Le nœud server peut également exécuter des workloads (pods) en plus de gérer le control plane. Dans K3s, un seul nœud peut être à la fois server et agent !
+                </div>
+            </div>
+            
+            <!-- SERVER TAB -->
+            <div id="server" class="tab-content">
+                <h2 style="color: #1F485E; margin-bottom: 20px;">🖥️ Nœud Server (Control Plane)</h2>
+                
+                <div class="architecture-diagram">
+                    <p style="color: #1F485E; font-size: 1.1em; margin-bottom: 20px;">
+                        Le nœud server héberge tous les composants du control plane dans un seul processus.
+                    </p>
+                    
+                    <div class="component-box">
+                        <div class="component-title">🎮 API Server</div>
+                        <div class="component-description">
+                            <strong>Rôle :</strong> Point d'entrée central pour toutes les requêtes REST. C'est le "cerveau" qui expose l'API Kubernetes.<br>
+                            <strong>Fonction :</strong> Authentification, autorisation, validation et communication avec etcd/SQLite.
+                        </div>
+                    </div>
+                    
+                    <div class="component-box">
+                        <div class="component-title">📊 Scheduler</div>
+                        <div class="component-description">
+                            <strong>Rôle :</strong> Décide sur quel nœud un pod doit être déployé.<br>
+                            <strong>Fonction :</strong> Analyse les ressources disponibles, contraintes et affinités pour placer optimalement les pods.
+                        </div>
+                    </div>
+                    
+                    <div class="component-box">
+                        <div class="component-title">🎛️ Controller Manager</div>
+                        <div class="component-description">
+                            <strong>Rôle :</strong> Ensemble de contrôleurs qui surveillent l'état du cluster.<br>
+                            <strong>Fonction :</strong> Gère les déploiements, replica sets, services, endpoints, etc. Assure que l'état actuel correspond à l'état désiré.
+                        </div>
+                    </div>
+                    
+                    <div class="component-box">
+                        <div class="component-title">💾 Base de données (SQLite par défaut)</div>
+                        <div class="component-description">
+                            <strong>Rôle :</strong> Stockage de toutes les données du cluster.<br>
+                            <strong>Fonction :</strong> Contient les définitions de pods, services, configurations, secrets, etc. Par défaut SQLite (léger), mais etcd disponible pour HA.
+                        </div>
+                    </div>
+                    
+                    <div class="component-box">
+                        <div class="component-title">🔌 Cloud Controller Manager</div>
+                        <div class="component-description">
+                            <strong>Rôle :</strong> Intégration avec les fournisseurs cloud.<br>
+                            <strong>Fonction :</strong> Gère les ressources cloud comme les load balancers, volumes, routes réseau.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="highlight-box">
+                    <h3>✨ Particularités K3s</h3>
+                    <ul>
+                        <li>Tous ces composants dans un seul binaire (~70 MB)</li>
+                        <li>SQLite par défaut (pas besoin d'etcd pour single-node)</li>
+                        <li>Traefik ingress controller pré-installé</li>
+                        <li>ServiceLB intégré pour LoadBalancer service type</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- AGENT TAB -->
+            <div id="agent" class="tab-content">
+                <h2 style="color: #1F485E; margin-bottom: 20px;">⚙️ Nœud Agent (Worker Node)</h2>
+                
+                <div class="architecture-diagram">
+                    <p style="color: #1F485E; font-size: 1.1em; margin-bottom: 20px;">
+                        Les nœuds agents exécutent les applications conteneurisées (pods) et communiquent avec le server.
+                    </p>
+                    
+                    <div class="component-box">
+                        <div class="component-title">🤖 Kubelet</div>
+                        <div class="component-description">
+                            <strong>Rôle :</strong> Agent qui s'exécute sur chaque nœud.<br>
+                            <strong>Fonction :</strong> Reçoit les spécifications de pods depuis l'API server, gère le cycle de vie des pods, surveille leur santé et rapporte leur statut.
+                        </div>
+                    </div>
+                    
+                    <div class="component-box">
+                        <div class="component-title">📦 Containerd</div>
+                        <div class="component-description">
+                            <strong>Rôle :</strong> Runtime de conteneurs.<br>
+                            <strong>Fonction :</strong> Gère l'exécution réelle des conteneurs : téléchargement d'images, création, démarrage, arrêt des conteneurs. Plus léger que Docker.
+                        </div>
+                    </div>
+                    
+                    <div class="component-box">
+                        <div class="component-title">🌐 Kube-proxy</div>
+                        <div class="component-description">
+                            <strong>Rôle :</strong> Gestion du réseau sur le nœud.<br>
+                            <strong>Fonction :</strong> Maintient les règles réseau, gère le load balancing entre les pods d'un service, assure la connectivité réseau.
+                        </div>
+                    </div>
+                    
+                    <div class="component-box">
+                        <div class="component-title">🔌 CNI (Flannel par défaut)</div>
+                        <div class="component-description">
+                            <strong>Rôle :</strong> Plugin réseau (Container Network Interface).<br>
+                            <strong>Fonction :</strong> Configure le réseau overlay pour permettre la communication entre pods sur différents nœuds. K3s utilise Flannel par défaut.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <strong>💡 Configuration Agent :</strong> Les agents sont lancés avec la commande <code>k3s agent --server https://&lt;server-url&gt; --token &lt;token&gt;</code>
+                </div>
+                
+                <div class="highlight-box">
+                    <h3>⚡ Performance K3s</h3>
+                    <ul>
+                        <li>Empreinte mémoire réduite (< 512 MB par agent)</li>
+                        <li>Containerd plus léger que Docker</li>
+                        <li>Démarrage rapide des pods</li>
+                        <li>Idéal pour Edge Computing et IoT</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- COMPARISON TAB -->
+            <div id="comparison" class="tab-content">
+                <h2 style="color: #1F485E; margin-bottom: 20px;">🔄 K3s vs Kubernetes Classique</h2>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Composant</th>
+                            <th>Kubernetes (K8s)</th>
+                            <th>K3s</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Taille binaire</strong></td>
+                            <td>Multiples binaires (~500 MB+)</td>
+                            <td>Binaire unique (~70 MB)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Base de données</strong></td>
+                            <td>etcd (obligatoire)</td>
+                            <td>SQLite (défaut) ou etcd</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Runtime conteneur</strong></td>
+                            <td>Docker, containerd, CRI-O</td>
+                            <td>Containerd (intégré)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ingress Controller</strong></td>
+                            <td>À installer (nginx, traefik...)</td>
+                            <td>Traefik (pré-installé)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>CNI</strong></td>
+                            <td>À choisir (Calico, Flannel...)</td>
+                            <td>Flannel (pré-installé)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Load Balancer</strong></td>
+                            <td>Nécessite cloud provider</td>
+                            <td>ServiceLB intégré</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mémoire RAM</strong></td>
+                            <td>2+ GB minimum</td>
+                            <td>512 MB minimum</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Installation</strong></td>
+                            <td>kubeadm, kops, kubespray...</td>
+                            <td>1 commande curl</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Composants legacy</strong></td>
+                            <td>Tous inclus</td>
+                            <td>Supprimés (alpha features, plugins...)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cas d'usage</strong></td>
+                            <td>Production enterprise</td>
+                            <td>Edge, IoT, Dev, Small clusters</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="highlight-box">
+                    <h3>🎯 Ce qui reste identique</h3>
+                    <ul>
+                        <li>100% compatible avec l'API Kubernetes</li>
+                        <li>Certification CNCF (Cloud Native Computing Foundation)</li>
+                        <li>Supporte tous les workloads Kubernetes</li>
+                        <li>kubectl fonctionne de la même manière</li>
+                        <li>Fichiers YAML identiques</li>
+                    </ul>
+                </div>
+                
+                <div class="info-box">
+                    <strong>🔑 Le secret de K3s :</strong> Suppression des composants legacy et cloud-specific, optimisation du code, et intégration de tous les outils essentiels dans un seul binaire.
+                </div>
+            </div>
+            
+            <!-- NETWORK TAB -->
+            <div id="network" class="tab-content">
+                <h2 style="color: #1F485E; margin-bottom: 20px;">🌐 Architecture Réseau K3s</h2>
+                
+                <div class="architecture-diagram">
+                    <h3 style="color: #0091D3; margin-bottom: 20px;">📡 Flux de communication</h3>
+                    
+                    <div class="network-flow">
+                        <div class="flow-item">
+                            <div class="flow-number">1</div>
+                            <div class="flow-text">
+                                <strong>Utilisateur → Ingress (Traefik)</strong><br>
+                                Requête HTTP/HTTPS arrive sur le port 80/443
+                            </div>
+                        </div>
+                        
+                        <div class="flow-item">
+                            <div class="flow-number">2</div>
+                            <div class="flow-text">
+                                <strong>Ingress → Service</strong><br>
+                                Traefik route vers le service approprié selon les règles
+                            </div>
+                        </div>
+                        
+                        <div class="flow-item">
+                            <div class="flow-number">3</div>
+                            <div class="flow-text">
+                                <strong>Service → Kube-proxy</strong><br>
+                                Le service utilise kube-proxy pour load-balancer
+                            </div>
+                        </div>
+                        
+                        <div class="flow-item">
+                            <div class="flow-number">4</div>
+                            <div class="flow-text">
+                                <strong>Kube-proxy → Pod</strong><br>
+                                Iptables/IPVS redirige vers un pod sain
+                            </div>
+                        </div>
+                        
+                        <div class="flow-item">
+                            <div class="flow-number">5</div>
+                            <div class="flow-text">
+                                <strong>Pod → Containerd</strong><br>
+                                Le conteneur traite la requête et répond
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="component-box">
+                    <div class="component-title">🔌 Flannel (CNI)</div>
+                    <div class="component-description">
+                        <strong>Rôle :</strong> Réseau overlay pour communication inter-pods.<br>
+                        <strong>Fonction :</strong> Crée un réseau virtuel qui permet aux pods de communiquer entre eux, même sur différents nœuds. Utilise VXLAN par défaut.
+                    </div>
+                </div>
+                
+                <div class="component-box">
+                    <div class="component-title">🚪 Traefik (Ingress)</div>
+                    <div class="component-description">
+                        <strong>Rôle :</strong> Reverse proxy et load balancer.<br>
+                        <strong>Fonction :</strong> Expose les services HTTP/HTTPS vers l'extérieur, gère le SSL/TLS, le routing basé sur hostname/path.
+                    </div>
+                </div>
+                
+                <div class="component-box">
+                    <div class="component-title">⚖️ ServiceLB (Klipper-lb)</div>
+                    <div class="component-description">
+                        <strong>Rôle :</strong> Load balancer pour services de type LoadBalancer.<br>
+                        <strong>Fonction :</strong> Alternative aux cloud load balancers. Utilise les ports des nœuds disponibles pour exposer les services.
+                    </div>
+                </div>
+                
+                <div class="highlight-box">
+                    <h3>📋 Types de Services K3s</h3>
+                    <ul>
+                        <li><strong>ClusterIP</strong> - Accessible uniquement en interne</li>
+                        <li><strong>NodePort</strong> - Expose sur un port de chaque nœud</li>
+                        <li><strong>LoadBalancer</strong> - Utilise ServiceLB (pas besoin de cloud)</li>
+                        <li><strong>ExternalName</strong> - Mapping DNS vers service externe</li>
+                    </ul>
+                </div>
+                
+                <div class="info-box">
+                    <strong>💡 Astuce réseau :</strong> Par défaut, K3s utilise le range 10.42.0.0/16 pour les pods et 10.43.0.0/16 pour les services. Ces ranges sont configurables au démarrage.
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Guide réalisé pour <span class="footer-accent">EPITECH</span> - École de l'excellence informatique</p>
+            <p style="margin-top: 10px; font-size: 0.85em; opacity: 0.8;">Apprendre à apprendre - Pédagogie par projets</p>
+        </div>
+    </div>
+    
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

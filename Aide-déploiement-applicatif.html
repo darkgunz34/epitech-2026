@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshop Kubernetes - Epitech</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1F485E 0%, #0091D3 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0091D3 0%, #1F485E 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 252, 154, 0.1);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .epitech-badge {
+            background: #FFFC9A;
+            color: #1F485E;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: #1F485E;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #0091D3;
+        }
+        
+        .architecture-box {
+            background: linear-gradient(135deg, #f0f8ff 0%, #e3f2fd 100%);
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid #0091D3;
+            margin-bottom: 30px;
+        }
+        
+        .architecture-box p {
+            color: #1F485E;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .architecture-box ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        
+        .architecture-box li {
+            padding: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            color: #1F485E;
+            line-height: 1.6;
+        }
+        
+        .architecture-box li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #0091D3;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+        
+        .architecture-box strong {
+            color: #0091D3;
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .column {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid #0091D3;
+        }
+        
+        .column-title {
+            font-size: 1.5em;
+            color: #1F485E;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0091D3;
+        }
+        
+        .frontend {
+            border-left: 5px solid #0091D3;
+        }
+        
+        .backend {
+            border-left: 5px solid #FFFC9A;
+        }
+        
+        .component-box {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #0091D3;
+        }
+        
+        .component-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #1F485E;
+            margin-bottom: 10px;
+        }
+        
+        .component-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .code-block {
+            background: #1F485E;
+            color: #FFFC9A;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+            border: 2px solid #0091D3;
+            line-height: 1.6;
+        }
+        
+        .ingress-section {
+            background: linear-gradient(135deg, #FFFC9A 0%, #fff9c4 100%);
+            border: 3px solid #0091D3;
+            padding: 35px;
+            border-radius: 12px;
+            margin: 40px 0;
+        }
+        
+        .ingress-section h2 {
+            color: #1F485E;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .ingress-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .ingress-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .routing-rules {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #0091D3;
+        }
+        
+        .route-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f0f8ff;
+            border-radius: 8px;
+        }
+        
+        .route-badge {
+            background: #0091D3;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.9em;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .route-arrow {
+            margin: 0 15px;
+            color: #0091D3;
+            font-size: 1.5em;
+        }
+        
+        .route-target {
+            color: #1F485E;
+            font-weight: 500;
+        }
+        
+        .route-target code {
+            background: #1F485E;
+            color: #FFFC9A;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        .commands-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid #0091D3;
+            margin-top: 40px;
+        }
+        
+        .commands-title {
+            font-size: 1.5em;
+            color: #1F485E;
+            margin-bottom: 20px;
+        }
+        
+        .commands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .command-item {
+            background: #1F485E;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #0091D3;
+        }
+        
+        .command-label {
+            color: #FFFC9A;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+        
+        .command-text {
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #0091D3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .info-box strong {
+            color: #1F485E;
+        }
+        
+        .note-box {
+            background: #fffef5;
+            border-left: 4px solid #FFFC9A;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .note-box strong {
+            color: #1F485E;
+        }
+        
+        .footer {
+            background: #1F485E;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+        }
+        
+        .footer-accent {
+            color: #FFFC9A;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Workshop Kubernetes : Fullstack App</h1>
+            <p>Apprendre à déployer et router une architecture Front (HTML) + Back (Python)</p>
+            <div class="epitech-badge">EPITECH - Excellence Informatique</div>
+            <p style="margin-top: 15px; font-size: 0.85em; opacity: 0.7;">En collaboration avec CA-GIP × CA-TS</p>
+        </div>
+        
+        <div class="content">
+            <!-- Architecture Section -->
+            <div class="section">
+                <h2 class="section-title">🏗️ 1. Comprendre l'Architecture</h2>
+                <div class="architecture-box">
+                    <p><strong>Le flux de données</strong> suit ce chemin dans votre cluster Kubernetes :</p>
+                    
+                    <ul>
+                        <li>
+                            <strong>Ingress (Traefik) :</strong> Le point d'entrée unique qui décide où envoyer la requête selon l'URL.
+                        </li>
+                        <li>
+                            <strong>Services :</strong> L'IP stable interne qui permet de trouver les Pods même s'ils redémarrent.
+                        </li>
+                        <li>
+                            <strong>Deployments :</strong> Les instructions pour créer les conteneurs (répliques, images).
+                        </li>
+                    </ul>
+                    
+                    <div class="info-box" style="margin-top: 20px;">
+                        <strong>💡 Concept clé :</strong> L'Ingress est comme un aiguillage de gare : il lit l'URL et dirige le trafic vers le bon service (frontend ou backend).
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Frontend & Backend Grid -->
+            <div class="grid-container">
+                <!-- Frontend Column -->
+                <div class="column frontend">
+                    <h3 class="column-title">🎨 Partie A : Le Frontend</h3>
+                    
+                    <div class="component-box">
+                        <div class="component-title">📦 Le Deployment</div>
+                        <div class="component-description">
+                            On utilise l'image <code style="background: #e3f2fd; padding: 2px 6px; border-radius: 3px; color: #0091D3;">stephanparichon/epitech-front:latest</code>
+                        </div>
+                        <div class="note-box">
+                            <strong>Port exposé :</strong> 80 (HTTP standard)
+                        </div>
+                        <div class="code-block">template:
+  spec:
+    containers:
+    - name: front
+      image: stephanparichon/epitech-front:latest
+      ports:
+      - containerPort: 80</div>
+                    </div>
+                    
+                    <div class="component-box">
+                        <div class="component-title">🔌 Le Service</div>
+                        <div class="component-description">
+                            C'est le "téléphone" du front. Il utilise un <strong>ClusterIP</strong> car il n'a pas besoin d'être vu de l'extérieur directement (l'Ingress s'en occupe).
+                        </div>
+                        <div class="info-box">
+                            <strong>💡 Pourquoi ClusterIP ?</strong> Le service reste interne au cluster. Seul l'Ingress expose vers l'extérieur.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Backend Column -->
+                <div class="column backend">
+                    <h3 class="column-title">⚙️ Partie B : Le Backend (API)</h3>
+                    
+                    <div class="component-box">
+                        <div class="component-title">📦 Le Deployment</div>
+                        <div class="component-description">
+                            Ici on demande <strong>2 répliques</strong> pour la haute disponibilité.
+                        </div>
+                        <div class="note-box">
+                            <strong>Port exposé :</strong> 5000 (Flask/Python standard)
+                        </div>
+                        <div class="code-block">spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+      - name: api
+        image: stephanparichon/epitech-api:latest
+        ports:
+        - containerPort: 5000</div>
+                    </div>
+                    
+                    <div class="component-box">
+                        <div class="component-title">🔌 Le Service</div>
+                        <div class="component-description">
+                            Il relie le port 5000 de l'API au reste du cluster.
+                        </div>
+                        <div class="info-box">
+                            <strong>💡 Load Balancing :</strong> Avec 2 répliques, le service répartit automatiquement les requêtes entre les deux pods.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ingress Section -->
+            <div class="ingress-section">
+                <h2>🧠 Le Cerveau : L'Ingress Traefik</h2>
+                
+                <div class="ingress-content">
+                    <div class="routing-rules">
+                        <p style="margin-bottom: 20px; color: #1F485E; font-weight: 500;">
+                            L'Ingress est crucial car il gère le <strong>Routing</strong> :
+                        </p>
+                        
+                        <div class="route-item">
+                            <span class="route-badge">/api</span>
+                            <span class="route-arrow">→</span>
+                            <span class="route-target">Vers <code>epitech-api-svc</code></span>
+                        </div>
+                        
+                        <div class="route-item">
+                            <span class="route-badge">/</span>
+                            <span class="route-arrow">→</span>
+                            <span class="route-target">Vers <code>epitech-front-svc</code></span>
+                        </div>
+                        
+                        <div class="info-box" style="margin-top: 20px;">
+                            <strong>💡 Astuce :</strong> Les requêtes vers <code>/api/*</code> vont au backend, tout le reste va au frontend.
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div style="background: #1F485E; padding: 20px; border-radius: 8px; border: 2px solid #0091D3;">
+                            <p style="color: #FFFC9A; font-size: 0.85em; margin-bottom: 10px; opacity: 0.8;"># Extrait Ingress YAML</p>
+                            <div class="code-block" style="margin: 0; padding: 15px; font-size: 0.85em;">- path: /api
+  pathType: Prefix
+  backend:
+    service:
+      name: epitech-api-svc
+      port:
+        number: 5000</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Commands Section -->
+            <div class="commands-section">
+                <h3 class="commands-title">💻 Commandes utiles</h3>
+                
+                <div class="commands-grid">
+                    <div class="command-item">
+                        <div class="command-label"># Déployer les ressources</div>
+                        <div class="command-text">kubectl apply -f manifest.yaml</div>
+                    </div>
+                    
+                    <div class="command-item">
+                        <div class="command-label"># Vérifier l'état du cluster</div>
+                        <div class="command-text">kubectl get all</div>
+                    </div>
+                    
+                    <div class="command-item">
+                        <div class="command-label"># Voir les logs de l'API</div>
+                        <div class="command-text">kubectl logs -l app=epitech-api</div>
+                    </div>
+                    
+                    <div class="command-item">
+                        <div class="command-label"># Voir les logs du frontend</div>
+                        <div class="command-text">kubectl logs -l app=epitech-front</div>
+                    </div>
+                    
+                    <div class="command-item">
+                        <div class="command-label"># Vérifier l'Ingress</div>
+                        <div class="command-text">kubectl get ingress</div>
+                    </div>
+                    
+                    <div class="command-item">
+                        <div class="command-label"># Tester l'API</div>
+                        <div class="command-text">curl http://localhost/api</div>
+                    </div>
+                </div>
+                
+                <div class="note-box" style="margin-top: 25px;">
+                    <strong>💡 Pro tip :</strong> Utilisez <code style="background: #1F485E; color: #FFFC9A; padding: 2px 6px; border-radius: 3px;">kubectl describe</code> suivi du type de ressource pour obtenir des détails complets sur un problème.
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Guide réalisé pour <span class="footer-accent">EPITECH</span> - École de l'excellence informatique</p>
+            <p style="margin-top: 10px; font-size: 0.85em; opacity: 0.8;">Apprendre à apprendre - Pédagogie par projets</p>
+            <p style="margin-top: 15px; font-size: 0.8em; opacity: 0.6;">CA-GIP (Crédit Agricole Group Infrastructure Platform) × CA-TS (Crédit Agricole Technologies et Services)</p>
+        </div>
+    </div>
+</body>
+</html>

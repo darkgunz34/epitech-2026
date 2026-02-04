@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation K3s sur Debian - Epitech</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1F485E 0%, #0091D3 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0091D3 0%, #1F485E 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 252, 154, 0.1);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .epitech-badge {
+            background: #FFFC9A;
+            color: #1F485E;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            border-left: 5px solid #0091D3;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .step:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 145, 211, 0.2);
+            background: #f0f8ff;
+        }
+        
+        .step.completed {
+            border-left-color: #FFFC9A;
+            background: #fffef5;
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            background: #0091D3;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .step.completed .step-number {
+            background: linear-gradient(135deg, #FFFC9A, #ffd700);
+            color: #1F485E;
+        }
+        
+        .step-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1F485E;
+            margin-bottom: 15px;
+        }
+        
+        .step-description {
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .code-block {
+            background: #1F485E;
+            color: #FFFC9A;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            overflow-x: auto;
+            margin: 15px 0;
+            position: relative;
+            border: 2px solid #0091D3;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #0091D3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            background: #FFFC9A;
+            color: #1F485E;
+        }
+        
+        .copy-btn.copied {
+            background: #FFFC9A;
+            color: #1F485E;
+        }
+        
+        .note {
+            background: #fffef5;
+            border-left: 4px solid #FFFC9A;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .note strong {
+            color: #1F485E;
+        }
+        
+        .checkbox-container {
+            margin-top: 15px;
+        }
+        
+        .checkbox-container label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 500;
+            color: #0091D3;
+        }
+        
+        .checkbox-container input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: #0091D3;
+        }
+        
+        .progress-bar {
+            background: #e9ecef;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 30px 0;
+            border: 2px solid #0091D3;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #0091D3, #FFFC9A);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1F485E;
+            font-weight: bold;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #0091D3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .success-box {
+            background: linear-gradient(135deg, #FFFC9A 0%, #fff9c4 100%);
+            border: 3px solid #0091D3;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 12px;
+            display: none;
+            text-align: center;
+        }
+        
+        .success-box.show {
+            display: block;
+        }
+        
+        .success-box h2 {
+            color: #1F485E;
+            margin-bottom: 15px;
+        }
+        
+        .success-box p {
+            color: #1F485E;
+        }
+        
+        .footer {
+            background: #1F485E;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+        }
+        
+        .footer-accent {
+            color: #FFFC9A;
+            font-weight: bold;
+        }
+        
+        .k3s-description {
+            background: linear-gradient(135deg, #f0f8ff 0%, #e3f2fd 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 2px solid #0091D3;
+        }
+        
+        .k3s-description h2 {
+            color: #1F485E;
+            margin-bottom: 15px;
+        }
+        
+        .k3s-description h3 {
+            color: #0091D3;
+            margin-bottom: 15px;
+        }
+        
+        .k3s-description p {
+            line-height: 1.6;
+            color: #1F485E;
+            margin-bottom: 15px;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .comparison-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #0091D3;
+        }
+        
+        .comparison-header {
+            background: #0091D3;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .comparison-item ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .comparison-item li {
+            padding: 8px 0;
+            color: #1F485E;
+            line-height: 1.5;
+        }
+        
+        .use-cases {
+            background: #fffef5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 2px solid #FFFC9A;
+        }
+        
+        .use-cases h3 {
+            color: #1F485E;
+            margin-bottom: 10px;
+        }
+        
+        .use-cases p {
+            color: #1F485E;
+            line-height: 1.8;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Installation K3s sur Debian</h1>
+            <p>Guide interactif étape par étape</p>
+            <div class="epitech-badge">EPITECH - Excellence Informatique</div>
+        </div>
+        
+        <div class="content">
+            <div class="k3s-description">
+                <h2>📘 Qu'est-ce que K3s ?</h2>
+                <p><strong>K3s</strong> est une distribution légère de Kubernetes certifiée par la Cloud Native Computing Foundation (CNCF). Développé par Rancher Labs (maintenant SUSE), K3s est optimisé pour les environnements à ressources limitées.</p>
+                
+                <h3 style="margin-top: 20px; color: #1F485E;">🔄 K3s vs Kubernetes (K8s)</h3>
+                <div class="comparison-grid">
+                    <div class="comparison-item">
+                        <div class="comparison-header">K3s</div>
+                        <ul>
+                            <li>✅ Binaire unique (~70 MB)</li>
+                            <li>✅ Installation en 1 commande</li>
+                            <li>✅ Faible empreinte mémoire (512 MB min)</li>
+                            <li>✅ Parfait pour IoT, Edge, Dev</li>
+                            <li>✅ SQLite intégré (pas besoin d'etcd)</li>
+                            <li>✅ Containerd par défaut</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-header">Kubernetes</div>
+                        <ul>
+                            <li>⚙️ Installation complexe</li>
+                            <li>⚙️ Plusieurs composants séparés</li>
+                            <li>⚙️ Plus gourmand en ressources (2+ GB)</li>
+                            <li>⚙️ Orienté production entreprise</li>
+                            <li>⚙️ Nécessite etcd</li>
+                            <li>⚙️ Plus de configuration</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="use-cases">
+                    <h3>💡 Cas d'usage idéaux pour K3s</h3>
+                    <p>• Environnements de développement et tests<br>
+                    • Déploiements Edge Computing et IoT<br>
+                    • CI/CD pipelines<br>
+                    • Clusters ARM (Raspberry Pi)<br>
+                    • Petites infrastructures</p>
+                </div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar">0%</div>
+            </div>
+            
+            <div class="step" data-step="1">
+                <div class="step-title">
+                    <span class="step-number">1</span>
+                    Installer les dépendances
+                </div>
+                <div class="step-description">
+                    Installez curl si ce n'est pas déjà fait (nécessaire pour télécharger le script d'installation).
+                </div>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                    <code>sudo apt install curl -y</code>
+                </div>
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" onchange="markComplete(1)">
+                        Étape terminée
+                    </label>
+                </div>
+            </div>
+            
+            <div class="step" data-step="2">
+                <div class="step-title">
+                    <span class="step-number">2</span>
+                    Télécharger et installer K3s
+                </div>
+                <div class="step-description">
+                    Utilisez le script officiel d'installation K3s. Cette commande télécharge et installe K3s en tant que service systemd.
+                </div>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                    <code>curl -sfL https://get.k3s.io | sh -</code>
+                </div>
+                <div class="note">
+                    <strong>⚠️ Note :</strong> L'installation peut prendre quelques minutes. Le script configure automatiquement K3s comme service.
+                </div>
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" onchange="markComplete(2)">
+                        Étape terminée
+                    </label>
+                </div>
+            </div>
+            
+            <div class="step" data-step="3">
+                <div class="step-title">
+                    <span class="step-number">3</span>
+                    Vérifier l'installation
+                </div>
+                <div class="step-description">
+                    Vérifiez que K3s fonctionne correctement et que le service est actif.
+                </div>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                    <code>sudo systemctl status k3s</code>
+                </div>
+                <div class="info-box">
+                    <strong>💡 Astuce :</strong> Le service doit être "active (running)".
+                </div>
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" onchange="markComplete(3)">
+                        Étape terminée
+                    </label>
+                </div>
+            </div>
+            
+            <div class="step" data-step="4">
+                <div class="step-title">
+                    <span class="step-number">4</span>
+                    Configurer kubectl
+                </div>
+                <div class="step-description">
+                    K3s installe automatiquement kubectl. Configurez les permissions pour l'utiliser sans sudo.
+                </div>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                    <code>sudo chmod 644 /etc/rancher/k3s/k3s.yaml
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml</code>
+                </div>
+                <div class="note">
+                    <strong>⚠️ Important :</strong> Ajoutez la ligne export dans votre ~/.bashrc pour la rendre permanente.
+                </div>
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" onchange="markComplete(4)">
+                        Étape terminée
+                    </label>
+                </div>
+            </div>
+            
+            <div class="step" data-step="5">
+                <div class="step-title">
+                    <span class="step-number">5</span>
+                    Tester votre cluster
+                </div>
+                <div class="step-description">
+                    Vérifiez que votre cluster K3s fonctionne en listant les nœuds.
+                </div>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                    <code>sudo kubectl get nodes</code>
+                </div>
+                <div class="info-box">
+                    <strong>✅ Résultat attendu :</strong> Vous devriez voir votre nœud avec le statut "Ready".
+                </div>
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" onchange="markComplete(5)">
+                        Étape terminée
+                    </label>
+                </div>
+            </div>
+            
+            <div class="step" data-step="6">
+                <div class="step-title">
+                    <span class="step-number">6</span>
+                    Commandes utiles
+                </div>
+                <div class="step-description">
+                    Quelques commandes pratiques pour gérer K3s.
+                </div>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                    <code># Redémarrer K3s
+sudo systemctl restart k3s
+
+# Arrêter K3s
+sudo systemctl stop k3s
+
+# Voir les logs
+sudo journalctl -u k3s -f
+
+# Désinstaller K3s
+/usr/local/bin/k3s-uninstall.sh</code>
+                </div>
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" onchange="markComplete(6)">
+                        Étape terminée
+                    </label>
+                </div>
+            </div>
+            
+            <div class="success-box" id="successBox">
+                <h2>🎉 Félicitations !</h2>
+                <p>Vous avez terminé l'installation de K3s sur Debian.<br>Votre cluster Kubernetes est prêt à l'emploi !</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Guide réalisé pour <span class="footer-accent">EPITECH</span> - École de l'excellence informatique</p>
+            <p style="margin-top: 10px; font-size: 0.85em; opacity: 0.8;">Apprendre à apprendre - Pédagogie par projets</p>
+        </div>
+    </div>
+    
+    <script>
+        let completedSteps = new Set();
+        const totalSteps = 6;
+        
+        function copyCode(button) {
+            const codeBlock = button.parentElement;
+            const code = codeBlock.querySelector('code').textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = '✓ Copié !';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = 'Copier';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+        
+        function markComplete(stepNumber) {
+            const step = document.querySelector(`[data-step="${stepNumber}"]`);
+            const checkbox = step.querySelector('input[type="checkbox"]');
+            
+            if (checkbox.checked) {
+                completedSteps.add(stepNumber);
+                step.classList.add('completed');
+            } else {
+                completedSteps.delete(stepNumber);
+                step.classList.remove('completed');
+            }
+            
+            updateProgress();
+        }
+        
+        function updateProgress() {
+            const percentage = (completedSteps.size / totalSteps) * 100;
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = Math.round(percentage) + '%';
+            
+            if (completedSteps.size === totalSteps) {
+                document.getElementById('successBox').classList.add('show');
+            } else {
+                document.getElementById('successBox').classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>

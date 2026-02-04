@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshop K8s Deployment - Epitech</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1F485E 0%, #0091D3 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0091D3 0%, #1F485E 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 252, 154, 0.1);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .epitech-badge {
+            background: #FFFC9A;
+            color: #1F485E;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .objective-box {
+            background: linear-gradient(135deg, #FFFC9A 0%, #fff9c4 100%);
+            border: 3px solid #0091D3;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .objective-box h2 {
+            color: #1F485E;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+        
+        .objective-box p {
+            color: #1F485E;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+        
+        .objective-box ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+        
+        .objective-box li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #1F485E;
+        }
+        
+        .objective-box li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #0091D3;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .progress-bar {
+            background: #e9ecef;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 30px 0;
+            border: 2px solid #0091D3;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #0091D3, #FFFC9A);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1F485E;
+            font-weight: bold;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            border-left: 5px solid #0091D3;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .step:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 145, 211, 0.2);
+            background: #f0f8ff;
+        }
+        
+        .step.completed {
+            border-left-color: #FFFC9A;
+            background: #fffef5;
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            background: #0091D3;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .step.completed .step-number {
+            background: linear-gradient(135deg, #FFFC9A, #ffd700);
+            color: #1F485E;
+        }
+        
+        .step-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1F485E;
+            margin-bottom: 15px;
+        }
+        
+        .step-description {
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .task-box {
+            background: linear-gradient(135deg, #f0f8ff 0%, #e3f2fd 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #0091D3;
+        }
+        
+        .task-title {
+            font-weight: bold;
+            color: #1F485E;
+            margin-bottom: 10px;
+        }
+        
+        .task-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .task-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #1F485E;
+        }
+        
+        .task-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #0091D3;
+            font-weight: bold;
+        }
+        
+        .hint-box {
+            background: #fffef5;
+            border-left: 4px solid #FFFC9A;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .hint-box strong {
+            color: #1F485E;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #0091D3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .info-box strong {
+            color: #1F485E;
+        }
+        
+        .warning-box {
+            background: #fff9e6;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .warning-box strong {
+            color: #1F485E;
+        }
+        
+        .checkbox-container {
+            margin-top: 15px;
+        }
+        
+        .checkbox-container label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 500;
+            color: #0091D3;
+        }
+        
+        .checkbox-container input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: #0091D3;
+        }
+        
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .resource-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #0091D3;
+            transition: all 0.3s ease;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 145, 211, 0.2);
+        }
+        
+        .resource-card h4 {
+            color: #0091D3;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .resource-card p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+        
+        .code-snippet {
+            background: #1F485E;
+            color: #FFFC9A;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 10px 0;
+            border: 2px solid #0091D3;
+            overflow-x: auto;
+            white-space: pre;
+        }
+        
+        pre.code-snippet {
+            margin: 10px 0;
+        }
+        
+        .success-box {
+            background: linear-gradient(135deg, #FFFC9A 0%, #fff9c4 100%);
+            border: 3px solid #0091D3;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 12px;
+            display: none;
+            text-align: center;
+        }
+        
+        .success-box.show {
+            display: block;
+        }
+        
+        .success-box h2 {
+            color: #1F485E;
+            margin-bottom: 15px;
+        }
+        
+        .success-box p {
+            color: #1F485E;
+        }
+        
+        .footer {
+            background: #1F485E;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+        }
+        
+        .footer-accent {
+            color: #FFFC9A;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Workshop : Déployer votre Application K8s</h1>
+            <p>De la création des manifests au déploiement complet</p>
+            <div class="epitech-badge">EPITECH - Excellence Informatique</div>
+            <p style="margin-top: 15px; font-size: 0.85em; opacity: 0.7;">En collaboration avec CA-GIP × CA-TS</p>
+        </div>
+        
+        <div class="content">
+            <div class="objective-box">
+                <h2>🎯 Objectif du Workshop</h2>
+                <p>Vous allez déployer une application fullstack (Frontend + Backend) sur Kubernetes avec un Ingress pour gérer le routage.</p>
+                
+                <h3 style="color: #1F485E; margin-top: 20px; margin-bottom: 10px;">Composants à déployer :</h3>
+                <ul>
+                    <li><strong>Frontend</strong> : Application HTML servie par Nginx (port 80)</li>
+                    <li><strong>Backend</strong> : API Python Flask (port 5000) avec 2 répliques</li>
+                    <li><strong>Services</strong> : Pour exposer les applications en interne</li>
+                    <li><strong>Ingress</strong> : Pour router les requêtes externes</li>
+                </ul>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar">0%</div>
+            </div>
+            
+            <!-- STEP 1 -->
+            <div class="step" data-step="1">
+                <div class="step-title">
+                    <span class="step-number">1</span>
+                    Créer le fichier de manifests
+                </div>
+                <div class="step-description">
+                    Tous les manifests Kubernetes peuvent être regroupés dans un seul fichier YAML, séparés par <code>---</code>
+                </div>
+                
+                <div class="task-box">
+                    <div class="task-title">📝 Votre tâche :</div>
+                    <ul class="task-list">
+                        <li>Créez un fichier nommé <code>app-manifests.yaml</code></li>
+                        <li>Ce fichier contiendra tous les manifests nécessaires</li>
+                    </ul>
+                </div>
+                
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" onchange="markComplete(1)">
+                        Étape terminée
+                    </label>
+                </div>
+            </div>
+            
+            <!-- STEP 2 -->
+            <div class="step" data-step="2">
+                <div class="step-title">
+                    <span class="step-number">2</span>
+                    Déploiement du Frontend
+                </div>
+                <div class="step-description">
+                    Le frontend est une application HTML statique servie par Nginx.
+                </div>
+                
+                <div class="task-box">
+                    <div class="task-title">📝 À créer dans votre fichier :</div>
+                    <ul class="task-list">
+                        <li><strong>Deployment</strong> pour le frontend</li>
+                        <li><strong>Service</strong> de type ClusterIP</li>
+                    </ul>
+                </div>
+                
+                <div class="resource-grid">
+                    <div class="resource-card">
+                        <h4>📦 Deployment Frontend</h4>
+                        <p><strong>Nom :</strong> epitech-front-deploy</p>
+                        <p><strong>Répliques :</strong> 1</p>
+                        <p><strong>Image :</strong> stephanparichon/epitech-front:latest</p>
+                        <p><strong>Port :</strong> 80</p>
+                        <p><strong>Label :</strong> app: epitech-front</p>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <h4>🔌 Service Frontend</h4>
+                        <p><strong>Nom :</strong> epitech-front-svc</p>
+                        <p><strong>Type :</strong> ClusterIP</p>
+                        <p><strong>Port :</strong> 80 → 80</p>
+                        <p><strong>Selector :</strong> app: epitech-front</p>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <strong>💡 Pourquoi ClusterIP ?</strong> Le service reste interne au cluster. L'Ingress se chargera d'exposer l'application vers l'extérieur.
+                </div>
+                
+                <div class="hint-box">
+                    <strong>💡 Structure d'un Deployment :</strong>
+                    <pre class="code-snippet">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: [nom-deployment]
+spec:
+  replicas: [nombre]
+  selector:
+    matchLabels:
+      app: [nom-app]
+  template:
+    metadata:
+      labels:
+        app: [nom-app]
+    spec:
+      containers:
+      - name: [nom-container]
+        image: [image:tag]
+        ports:
+        - containerPort: [port]</pre>
+                </div>
+                
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" onchange="markComplete(2)">
+                        Étape terminée
+                    </label>
+                </div>
+            </div>
+            
+            <!-- STEP 3 -->
+            <div class="step" data-step="3">
+                <div class="step-title">
+                    <span class="step-number">3</span>
+                    Déploiement du Backend (API)
+                </div>
+                <div class="step-description">
+                    Le backend est une API Python Flask qui doit tourner avec 2 répliques pour la haute disponibilité.
+                </div>
+                
+                <div class="task-box">
+                    <div class="task-title">📝 À créer dans votre fichier :</div>
+                    <ul class="task-list">
+                        <li><strong>Deployment</strong> pour le backend avec 2 répliques</li>
+                        <li><strong>Service</strong> de type ClusterIP</li>
+                    </ul>
+                </div>
+                
+                <div class="resource-grid">
+                    <div class="resource-card">
+                        <h4>📦 Deployment Backend</h4>
+                        <p><strong>Nom :</strong> epitech-api-deploy</p>
+                        <p><strong>Répliques :</strong> 2</p>
+                        <p><strong>Image :</strong> stephanparichon/epitech-api:latest</p>
+                        <p><strong>Port :</strong> 5000</p>
+                        <p><strong>Label :</strong> app: epitech-api</p>
+                        <p><strong>Variable env :</strong> PYTHONUNBUFFERED=1</p>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <h4>🔌 Service Backend</h4>
+                        <p><strong>Nom :</strong> epitech-api-svc</p>
+                        <p><strong>Type :</strong> ClusterIP</p>
+                        <p><strong>Port :</strong> 5000 → 5000</p>
+                        <p><strong>Selector :</strong> app: epitech-api</p>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <strong>💡 Pourquoi 2 répliques ?</strong> Sur un cluster multi-nœuds, cela assurerait la haute disponibilité. Ici, avec un seul nœud K3s, les 2 pods tourneront sur la même machine, donc pas de vraie HA. Cependant, cela nous permettra de <strong>comprendre le fonctionnement du load balancing</strong> de Kubernetes à la fin du TP !
+                </div>
+                
+                <div class="hint-box">
+                    <strong>💡 Ajouter une variable d'environnement :</strong>
+                    <pre class="code-snippet">    containers:
+    - name: api
+      image: [...]
+      env:
+      - name: PYTHONUNBUFFERED
+        value: "1"</pre>
+                </div>
+                
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" onchange="markComplete(3)">
+                        Étape terminée
+                    </label>
+                </div>
+            </div>
+            
+            <!-- STEP 4 -->
+            <div class="step" data-step="4">
+                <div class="step-title">
+                    <span class="step-number">4</span>
+                    Configurer l'Ingress (Routage)
+                </div>
+                <div class="step-description">
+                    L'Ingress est le point d'entrée de votre application. Il va router les requêtes selon l'URL.
+                </div>
+                
+                <div class="task-box">
+                    <div class="task-title">📝 À créer dans votre fichier :</div>
+                    <ul class="task-list">
+                        <li><strong>Ingress</strong> avec deux règles de routage</li>
+                    </ul>
+                </div>
+                
+                <div class="resource-grid" style="grid-template-columns: 1fr;">
+                    <div class="resource-card">
+                        <h4>🚪 Ingress Configuration</h4>
+                        <p><strong>Nom :</strong> epitech-ingress</p>
+                        <p style="margin-top: 15px;"><strong>Règles de routage :</strong></p>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li style="margin: 8px 0;"><code>/api</code> → <strong>epitech-api-svc</strong> (port 5000)</li>
+                            <li style="margin: 8px 0;"><code>/</code> → <strong>epitech-front-svc</strong> (port 80)</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>pathType :</strong> Prefix (pour les deux)</p>
+                    </div>
+                </div>
+                
+                <div class="warning-box">
+                    <strong>⚠️ Important :</strong> L'ordre des règles compte ! Mettez la règle <code>/api</code> <strong>AVANT</strong> la règle <code>/</code> pour éviter que tout soit capturé par la racine.
+                </div>
+                
+                <div class="hint-box">
+                    <strong>💡 Structure d'un Ingress :</strong>
+                    <pre class="code-snippet">apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: [nom-ingress]
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: [nom-service-backend]
+            port:
+              number: [port]
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: [nom-service-frontend]
+            port:
+              number: [port]</pre>
+                </div>
+                
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" onchange="markComplete(4)">
+                        Étape terminée
+                    </label>
+                </div>
+            </div>
+            
+            <!-- STEP 5 -->
+            <div class="step" data-step="5">
+                <div class="step-title">
+                    <span class="step-number">5</span>
+                    Déployer l'application
+                </div>
+                <div class="step-description">
+                    Une fois tous vos manifests créés, il est temps de les déployer sur le cluster.
+                </div>
+                
+                <div class="task-box">
+                    <div class="task-title">📝 Commandes à exécuter :</div>
+                    <ul class="task-list">
+                        <li>Appliquer les manifests avec kubectl</li>
+                        <li>Vérifier que tout est bien déployé</li>
+                    </ul>
+                </div>
+                
+                <div class="hint-box">
+                    <strong>💡 Commande de déploiement :</strong>
+                    <pre class="code-snippet">kubectl apply -f app-manifests.yaml</pre>
+                </div>
+                
+                <div class="info-box">
+                    <strong>✅ Vérifications à faire :</strong>
+                    <pre class="code-snippet">kubectl get deployments
+
+kubectl get services
+
+kubectl get ingress
+
+kubectl get pods</pre>
+                </div>
+                
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" onchange="markComplete(5)">
+                        Étape terminée
+                    </label>
+                </div>
+            </div>
+            
+            <!-- SUCCESS BOX -->
+            <div class="success-box" id="successBox">
+                <h2>🎉 Félicitations !</h2>
+                <p>Vous avez réussi à déployer une application fullstack complète sur Kubernetes avec un Ingress fonctionnel !</p>
+                <br>
+                <p><strong>Vous maîtrisez maintenant :</strong></p>
+                <ul style="margin-top: 15px; text-align: left; display: inline-block;">
+                    <li style="margin: 5px 0;">✓ La création de Deployments multi-répliques</li>
+                    <li style="margin: 5px 0;">✓ La configuration de Services ClusterIP</li>
+                    <li style="margin: 5px 0;">✓ Le routage avec Ingress</li>
+                    <li style="margin: 5px 0;">✓ Le débogage d'applications Kubernetes</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Guide réalisé pour <span class="footer-accent">EPITECH</span> - École de l'excellence informatique</p>
+            <p style="margin-top: 10px; font-size: 0.85em; opacity: 0.8;">Apprendre à apprendre - Pédagogie par projets</p>
+            <p style="margin-top: 15px; font-size: 0.8em; opacity: 0.6;">CA-GIP (Crédit Agricole Group Infrastructure Platform) × CA-TS (Crédit Agricole Technologies et Services)</p>
+        </div>
+    </div>
+    
+    <script>
+        let completedSteps = new Set();
+        const totalSteps = 5;
+        
+        function markComplete(stepNumber) {
+            const step = document.querySelector(`[data-step="${stepNumber}"]`);
+            const checkbox = step.querySelector('input[type="checkbox"]');
+            
+            if (checkbox.checked) {
+                completedSteps.add(stepNumber);
+                step.classList.add('completed');
+            } else {
+                completedSteps.delete(stepNumber);
+                step.classList.remove('completed');
+            }
+            
+            updateProgress();
+        }
+        
+        function updateProgress() {
+            const percentage = (completedSteps.size / totalSteps) * 100;
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = Math.round(percentage) + '%';
+            
+            if (completedSteps.size === totalSteps) {
+                document.getElementById('successBox').classList.add('show');
+            } else {
+                document.getElementById('successBox').classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>
